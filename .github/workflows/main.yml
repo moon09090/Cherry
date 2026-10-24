@@ -1,0 +1,36 @@
+name: Deploy Cherry App
+
+# Trigger the workflow on pushes to the main branch
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout your repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Set up your runtime environment (Example: Node.js)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. Install project dependencies
+      - name: Install Dependencies
+        run: npm ci
+
+      # 4. Build your application
+      - name: Build Application
+        run: npm run build
+
+      # 5. Deploy step (Customize this based on your hosting provider)
+      - name: Deploy to Server
+        run: |
+          echo "Add your deployment commands or third-party deployment action here!"
+          # Example: sending files via SSH, using AWS CLI, or deploying to a cloud platform
