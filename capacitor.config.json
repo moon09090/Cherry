@@ -1,0 +1,7 @@
+{
+  "appId": "com.cherry.app",
+  "appName": "Cherry",
+  "webDir": "www",
+  "backgroundColor": "#170812",
+  "server": { "androidScheme": "https" }
+}
