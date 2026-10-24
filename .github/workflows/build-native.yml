@@ -1,0 +1,48 @@
+name: Deploy Cherry App
+name: Build Cherry Native App
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout your repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Java JDK (required for compiling Android native code)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Set up Android SDK environment
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # 4. Grant execute permission for Gradle wrapper
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+        continue-on-error: true
+
+      # 5. Build the Android APK release package
+      - name: Build APK with Gradle
+        run: |
+          # If your project is a React Native app inside a subfolder or standard root:
+          ./gradlew assembleRelease
+        continue-on-error: true
+
+      # 6. Save the built APK so you can download it from GitHub
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cherry-Android-APK
+          path: |
+            app/build/outputs/apk/release/*.apk
+            **/build/outputs/apk/release/*.apk
+            
