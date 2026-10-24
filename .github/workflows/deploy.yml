@@ -14,23 +14,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Set up your runtime environment (Example: Node.js)
+      # 2. Set up Node.js (without cache to avoid lock file errors)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
-      # 3. Install project dependencies
+      # 3. Install project dependencies using npm install
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
       # 4. Build your application
       - name: Build Application
         run: npm run build
 
-      # 5. Deploy step (Customize this based on your hosting provider)
+      # 5. Deploy step
       - name: Deploy to Server
         run: |
-          echo "Add your deployment commands or third-party deployment action here!"
-          # Example: sending files via SSH, using AWS CLI, or deploying to a cloud platform
+          echo "Add your deployment commands here!"
+          
