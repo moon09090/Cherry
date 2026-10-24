@@ -3,7 +3,7 @@ name: Build Cherry Native App
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # Allows manual trigger from GitHub web UI
+  workflow_dispatch:
 
 jobs:
   build-android:
@@ -21,9 +21,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3. Configure Android SDK tools
+      # 3. Configure Android SDK tools and automatically accept licenses
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          accept-license: true
 
       # 4. Make Gradle build tool executable
       - name: Make Gradle Wrapper Executable
@@ -43,4 +45,3 @@ jobs:
           path: |
             app/build/outputs/apk/debug/*.apk
             **/build/outputs/apk/debug/*.apk
-            
