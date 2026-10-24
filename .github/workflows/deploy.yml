@@ -3,34 +3,38 @@ name: Build Cherry Native App
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch: # Allows you to trigger the build manually from GitHub
 
 jobs:
   build-android:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Fetch your repository code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # 2. Set up Java environment (Required for Android builds)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
+      # 3. Configure Android SDK tools
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          accept-android-sdk-licenses: true
+        uses: android-actions/setup-android@v4
 
+      # 4. Make Gradle executable
       - name: Make Gradle Wrapper Executable
         run: chmod +x ./gradlew
         continue-on-error: true
 
+      # 5. Compile the Android Debug APK
       - name: Build Android APK
         run: ./gradlew assembleDebug
 
+      # 6. Save the APK file to download from GitHub
       - name: Upload APK File
         uses: actions/upload-artifact@v4
         with:
