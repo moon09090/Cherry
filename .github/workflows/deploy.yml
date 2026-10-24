@@ -37,11 +37,20 @@ jobs:
           npm install
           npm run build --if-present
 
-      # 6. Dynamically generate the missing Android project files via code
+      # 6. Generate Native Android Platform safely via config file
       - name: Generate Native Android Platform
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap init Cherry com.cherry.app --web-dir . --yes
+          
+          # Create capacitor configuration file automatically
+          cat << 'EOF' > capacitor.config.json
+          {
+            "appId": "com.cherry.app",
+            "appName": "Cherry",
+            "webDir": "."
+          }
+          EOF
+
           npx cap add android
 
       # 7. Compile the Android Debug APK
