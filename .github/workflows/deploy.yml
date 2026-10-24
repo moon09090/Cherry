@@ -3,42 +3,59 @@ name: Build Cherry Native App
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # Allows you to trigger the build manually from GitHub
+  workflow_dispatch:
 
 jobs:
   build-android:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Fetch your repository code
+      # 1. Checkout your repository code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Set up Java environment (Required for Android builds)
+      # 2. Set up Node.js for dependency handling
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 3. Set up Java JDK required for Android compilation
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3. Configure Android SDK tools
+      # 4. Setup Android SDK tools
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
 
-      # 4. Make Gradle executable
-      - name: Make Gradle Wrapper Executable
-        run: chmod +x ./gradlew
-        continue-on-error: true
+      # 5. Install project dependencies
+      - name: Install Dependencies
+        run: |
+          npm install
+          npm run build --if-present
 
-      # 5. Compile the Android Debug APK
+      # 6. Dynamically generate the missing Android project files via code
+      - name: Generate Native Android Platform
+        run: |
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap init Cherry com.cherry.app --web-dir . --yes
+          npx cap add android
+
+      # 7. Compile the Android Debug APK
       - name: Build Android APK
-        run: ./gradlew assembleDebug
+        run: |
+          cd android
+          chmod +x ./gradlew
+          ./gradlew assembleDebug
 
-      # 6. Save the APK file to download from GitHub
+      # 8. Save the compiled APK file
       - name: Upload APK File
         uses: actions/upload-artifact@v4
         with:
           name: Cherry-App-APK
           path: |
-            app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/apk/debug/*.apk
             **/build/outputs/apk/debug/*.apk
